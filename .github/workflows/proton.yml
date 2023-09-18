@@ -4,7 +4,6 @@ on:
 
 jobs:
   build:
-    name: 
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     
