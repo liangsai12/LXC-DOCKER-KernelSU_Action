@@ -49,12 +49,12 @@ jobs:
     - name: 编译uboot
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/u-boot
-        make CROSS_COMPILE=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- s32g274ardb2_defconfig 
-        make CROSS_COMPILE=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+        make CROSS_COMPILE= $GITHUB_WORKSPACE/kernel_workspace/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- s32g274ardb2_defconfig 
+        make CROSS_COMPILE= $GITHUB_WORKSPACE/kernel_workspace/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
     - name: 编译firmware源码
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/arm-trusted-firmware
-        make CROSS_COMPILE=./gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- ARCH=aarch64 PLAT=s32g274ardb2  BL33=$GITHUB_WORKSPACE/kernel_workspace/u-boot/u-boot-s32.bin
+        make CROSS_COMPILE= $GITHUB_WORKSPACE/kernel_workspace/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- ARCH=aarch64 PLAT=s32g274ardb2  BL33=$GITHUB_WORKSPACE/kernel_workspace/u-boot/u-boot-s32.bin
             
     - name: 打包并上传
       uses: actions/upload-artifact@v3
