@@ -28,7 +28,7 @@ jobs:
     - name: 构建编译环境
       run: |
         sudo apt update
-        sudo apt -y install swig git make bc bison  openssl zip  flex  curl libssl-dev  wget  ca-certificates python3 python2 python-dev
+        sudo apt -y install swig git make bc bison  openssl zip  flex  curl libssl-dev  wget  ca-certificates python3 python2 python2-dev
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
  
     - name: 下载gcc-arm
