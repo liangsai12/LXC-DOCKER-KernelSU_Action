@@ -1,0 +1,62 @@
+name: 低端机 谷歌clang12.0.5
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: 环境变量配置
+      run: |
+        cat config.env | grep KERNEL_SOURCE= >> $GITHUB_ENV
+        cat config.env | grep KERNEL_SOURCE_BRANCH= >> $GITHUB_ENV
+        cat config.env | grep KERNEL_CONFIG= >> $GITHUB_ENV
+        cat config.env | grep KERNEL_ZIP_NAME= >> $GITHUB_ENV
+        cat config.env | grep LLVM_CONFIG= >> $GITHUB_ENV
+        cat config.env | grep ENABLE_KERNELSU= >> $GITHUB_ENV
+        cat config.env | grep KERNELSU_TAG= >> $GITHUB_ENV
+        cat config.env | grep ENABLE_KVM= >> $GITHUB_ENV
+        cat config.env | grep ENABLE_LXC_DOCKER= >> $GITHUB_ENV
+        cat config.env | grep ENABLE_KERNELSU= >> $GITHUB_ENV
+        cat config.env | grep KERNELSU_TAG= >> $GITHUB_ENV
+
+    - name: 构建编译环境
+      run: |
+        sudo apt update
+        sudo apt -y install swig git make bc bison  openssl zip  flex  curl libssl-dev  wget  ca-certificates python3 python2 python-dev
+		mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+	- name: 下载gcc-arm
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace	
+		wget https://developer.arm.com/-/media/Files/downloads/gnu-a/10.2-2020.11/binrel/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz?revision=972019b5-912f-4ae6-864a-f61f570e2e7e&rev=972019b5912f4ae6864af61f570e2e7e&hash=90B272942CAC63CBE2787E5F43E7B2C6D0AB20D6
+		tar -xvf gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
+	- name: 下载uboot
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        git clone https://github.com/nxp-auto-linux/u-boot -b bsp32.0-2020.04
+		
+    - name: 下载firmware源码
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        git clone https://github.com/nxp-auto-linux/arm-trusted-firmware -b bsp32.0-2.5                  
+    
+    - name: 编译uboot
+      run: |
+		cd $GITHUB_WORKSPACE/kernel_workspace/u-boot
+        make CROSS_COMPILE=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- s32g274ardb2_defconfig 
+        make CROSS_COMPILE=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-
+    - name: 编译firmware源码
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/arm-trusted-firmware
+        make CROSS_COMPILE=./gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- ARCH=aarch64 PLAT=s32g274ardb2  BL33=$GITHUB_WORKSPACE/kernel_workspace/u-boot/u-boot-s32.bin
+            
+    - name: 打包并上传
+      uses: actions/upload-artifact@v3
+      with:
+        name: uboot
+        path: kernel_workspace/u-boot/u-boot-s32.bin
