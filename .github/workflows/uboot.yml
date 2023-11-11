@@ -21,6 +21,7 @@ jobs:
     - name: 下载gcc-arm
       run: |
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace 
+        cd $GITHUB_WORKSPACE/kernel_workspace
         wget https://github.com/liangsai12/LXC-DOCKER-KernelSU_Action/releases/download/1/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
         tar -xvf gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu.tar.xz
     - name: 路径验证
