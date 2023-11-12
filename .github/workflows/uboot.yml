@@ -51,14 +51,14 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/u-boot
         ls
         [ -f u-boot-s32.bin ] && echo yes || echo no
-         
- #  - name: 编译firmware源码
- #     run: |
- #       cd $GITHUB_WORKSPACE/kernel_workspace/arm-trusted-firmware
- #       make CROSS_COMPILE=$GITHUB_WORKSPACE/kernel_workspace/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- ARCH=aarch64 PLAT=s32g274ardb2  BL33=$GITHUB_WORKSPACE/kernel_workspace/u-boot/u-boot-s32.bin
-            
     - name: 打包并上传
       uses: actions/upload-artifact@v3
       with:
         name: uboot
-        path: kernel_workspace/u-boot/u-boot-s32.bin
+        path: kernel_workspace/u-boot/u-boot-s32.bin      
+    - name: 编译firmware源码
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/arm-trusted-firmware
+        make CROSS_COMPILE=$GITHUB_WORKSPACE/kernel_workspace/gcc-arm-10.2-2020.11-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu- ARCH=aarch64 PLAT=s32g274ardb2  BL33=$GITHUB_WORKSPACE/kernel_workspace/u-boot/u-boot-s32.bin
+            
+
